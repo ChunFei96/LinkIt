@@ -9,7 +9,7 @@ public class Node : MonoBehaviour
     private void OnMouseDown()
     {
         //TODO: move the logic to GameController
-        GameController.Instance.allGOInstance.Add(this.gameObject);
+        //GameController.Instance.allGOInstance.Add(this.gameObject);
 
         GameController.Instance.selectedGOInstance.Enqueue(this.gameObject);
 

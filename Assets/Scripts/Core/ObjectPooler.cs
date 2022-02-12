@@ -59,7 +59,7 @@ public class ObjectPooler : MonoBehaviour
         
     }
 
-    public GameObject SpawnFromPool (string tag, Vector2 position)
+    public GameObject SpawnFromPool (string tag)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
@@ -70,11 +70,13 @@ public class ObjectPooler : MonoBehaviour
         if (poolDictionary[tag].Count > 0)
         {
             GameObject objectToSpawn = poolDictionary[tag].Dequeue();
+            GameController.Instance.allGOInstance.Add(objectToSpawn);
+
             int fileName = poolDictionary[tag].Count + 1;
             string filePath = Environment.CurrentDirectory + "/Assets/Resources/" + fileName + ".png";
 
             objectToSpawn.SetActive(true);
-            objectToSpawn.transform.position = position;
+            objectToSpawn.transform.position = GameController.Instance.CalculateNodePos();
             objectToSpawn.GetComponent<Node>().nodeModel.value = (poolDictionary[tag].Count + 1).ToString();
             objectToSpawn.GetComponent<SpriteRenderer>().sprite = SpriteController.instance.LoadNewSprite(filePath);
             //poolDictionary[tag].Enqueue(objectToSpawn);
