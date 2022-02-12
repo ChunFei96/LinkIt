@@ -11,6 +11,9 @@ public class Node : MonoBehaviour
         //TODO: move the logic to GameController
         //GameController.Instance.allGOInstance.Add(this.gameObject);
 
+        if (this.gameObject.GetComponent<Node>().nodeModel.isConnect)
+            return;
+
         GameController.Instance.selectedGOInstance.Enqueue(this.gameObject);
 
         if(GameController.Instance.selectedGOInstance.Count == 2)
@@ -26,6 +29,9 @@ public class Node : MonoBehaviour
                 line.endColor = Color.black;
                 line.startWidth = 0.1f;
                 line.endWidth = 0.1f;
+
+                firstGO.GetComponent<Node>().nodeModel.isConnect = true;
+                lastGO.GetComponent<Node>().nodeModel.isConnect = true;
 
                 var firstPosition = firstGO.transform.position;
                 var secondPosition = lastGO.transform.position;

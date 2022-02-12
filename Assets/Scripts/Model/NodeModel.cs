@@ -6,4 +6,5 @@ using UnityEngine;
 public class NodeModel
 {
     public string value;
+    public bool isConnect = false;
 }
