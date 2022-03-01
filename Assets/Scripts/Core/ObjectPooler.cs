@@ -21,15 +21,13 @@ public class ObjectPooler : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        linkedListGO = new LinkedList<string>();
     }
 
     #endregion
 
     public List<Pool> pools;
-    public Dictionary<string, Queue<GameObject>> poolDictionary;
 
-    public LinkedList<string> linkedListGO;
+    public static Dictionary<string, Queue<GameObject>> poolDictionary;
 
     // Start is called before the first frame update
     void Start()
@@ -46,47 +44,54 @@ public class ObjectPooler : MonoBehaviour
                 GameObject obj = Instantiate(pool.prefab);
                 obj.SetActive(false);
                 objectPool.Enqueue(obj);
+                DontDestroyOnLoad(obj);
             }
 
             poolDictionary.Add(pool.tag, objectPool);
             
         }
+
+        DontDestroyOnLoad(this.gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public GameObject SpawnFromPool (string tag)
+    public void SpawnFromPool(string tag)
     {
         if (!poolDictionary.ContainsKey(tag))
         {
             Debug.LogWarning("Pool with tag " + tag + " doesn't exist.");
-            return null;
         }
 
-        if (poolDictionary[tag].Count > 0)
+        while (poolDictionary[tag].Count > 0)
         {
+            // take a GO from the object pooler
             GameObject objectToSpawn = poolDictionary[tag].Dequeue();
-            GameController.Instance.allGOInstance.Add(objectToSpawn);
 
-            int fileName = poolDictionary[tag].Count + 1;
-            string filePath = Environment.CurrentDirectory + "/Assets/Resources/" + fileName + ".png";
+            // keep a GO list to calculate the node position
+            GameController.Instance.activeGOs.Add(objectToSpawn);
+        };
+    }
 
-            objectToSpawn.SetActive(true);
-            objectToSpawn.transform.position = GameController.Instance.CalculateNodePos();
-            objectToSpawn.GetComponent<Node>().nodeModel.value = (poolDictionary[tag].Count + 1).ToString();
-            objectToSpawn.GetComponent<SpriteRenderer>().sprite = SpriteController.instance.LoadNewSprite(filePath);
-            //poolDictionary[tag].Enqueue(objectToSpawn);
+    public void EnqueueToPool()
+    {
+        Queue<GameObject> objectPool = new Queue<GameObject>();
+        string tagName = string.Empty;
 
-            linkedListGO.AddFirst(objectToSpawn.GetComponent<Node>().nodeModel.value.ToString());
+        for (int i = 0; i < GameController.Instance.activeGOs.Count; i++)
+        {
+            GameObject GO = GameController.Instance.activeGOs[i];
+            tagName = GO.tag;
 
-            return objectToSpawn;
+            objectPool.Enqueue(GO);
+        };
+
+        if(tagName != string.Empty && objectPool != null)
+        {
+            // return unused GO back to object pool
+            poolDictionary.Add(tagName, objectPool);
+
+            // no more active GO on the scene
+            GameController.Instance.activeGOs = new List<GameObject>();
         }
-        else
-            return null;
-        
+            
     }
 }

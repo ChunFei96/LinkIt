@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 19938304}
   - component: {fileID: 19938303}
   - component: {fileID: 19938302}
+  - component: {fileID: 19938305}
   m_Layer: 5
   m_Name: TMTA
   m_TagString: Untagged
@@ -256,6 +257,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 19938300}
   m_CullTransparentMesh: 1
+--- !u!114 &19938305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19938300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aad72f263c9d98d45a737a1b9808c57b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameRule: 0
 --- !u!1 &546224208
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,6 +353,53 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &564152016
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 564152018}
+  - component: {fileID: 564152017}
+  m_Layer: 0
+  m_Name: ObjectPooler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &564152017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 564152016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fcf6a6d2057a7b54190c0efc1facd892, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pools:
+  - tag: Circle
+    prefab: {fileID: 7581376643407216508, guid: 2b410067e7d94c44aa2df9d4f896da99, type: 3}
+    size: 25
+--- !u!4 &564152018
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 564152016}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &727962171
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,6 +455,7 @@ GameObject:
   - component: {fileID: 878346623}
   - component: {fileID: 878346622}
   - component: {fileID: 878346621}
+  - component: {fileID: 878346624}
   m_Layer: 5
   m_Name: TMTB
   m_TagString: Untagged
@@ -503,6 +565,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 878346619}
   m_CullTransparentMesh: 1
+--- !u!114 &878346624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 878346619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aad72f263c9d98d45a737a1b9808c57b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameRule: 1
 --- !u!1 &1043139215
 GameObject:
   m_ObjectHideFlags: 0

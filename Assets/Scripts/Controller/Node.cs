@@ -14,56 +14,58 @@ public class Node : MonoBehaviour
         if (this.gameObject.GetComponent<Node>().nodeModel.isConnect)
             return;
 
-        GameController.Instance.selectedGOInstance.Enqueue(this.gameObject);
+        GameController.Instance.NodeOnMouseDown(this.gameObject);
 
-        if(GameController.Instance.selectedGOInstance.Count == 2)
-        {
-            GameObject firstGO = GameController.Instance.selectedGOInstance.Dequeue();
-            GameObject lastGO = GameController.Instance.selectedGOInstance.Dequeue();
+        //GameController.Instance.selectedGOInstance.Enqueue(this.gameObject);
 
-            
-            if (ValidationController.Instance.IsNextNodeValidated(ObjectPooler.Instance.linkedListGO, firstGO, lastGO))
-            {
-                LineRenderer line = new GameObject("Line").AddComponent<LineRenderer>();
-                line.startColor = Color.black;
-                line.endColor = Color.black;
-                line.startWidth = 0.1f;
-                line.endWidth = 0.1f;
+        //if(GameController.Instance.selectedGOInstance.Count == 2)
+        //{
+        //    GameObject firstGO = GameController.Instance.selectedGOInstance.Dequeue();
+        //    GameObject lastGO = GameController.Instance.selectedGOInstance.Dequeue();
 
-                firstGO.GetComponent<Node>().nodeModel.isConnect = true;
-                lastGO.GetComponent<Node>().nodeModel.isConnect = true;
 
-                var firstPosition = firstGO.transform.position;
-                var secondPosition = lastGO.transform.position;
+        //    if (ValidationController.Instance.IsNextNodeValidated(ObjectPooler.Instance.linkedListGO, firstGO, lastGO))
+        //    {
+        //        LineRenderer line = new GameObject("Line").AddComponent<LineRenderer>();
+        //        line.startColor = Color.black;
+        //        line.endColor = Color.black;
+        //        line.startWidth = 0.1f;
+        //        line.endWidth = 0.1f;
 
-                Vector3[] pathPoints = { firstPosition, secondPosition };
-                line.positionCount = 2;
-                line.SetPositions(pathPoints);
+        //        firstGO.GetComponent<Node>().nodeModel.isConnect = true;
+        //        lastGO.GetComponent<Node>().nodeModel.isConnect = true;
 
-                GameController.Instance.selectedGOInstance.Enqueue(this.gameObject);
+        //        var firstPosition = firstGO.transform.position;
+        //        var secondPosition = lastGO.transform.position;
 
-                // reset all GO to color white
-                foreach (var go in GameController.Instance.allGOInstance)
-                    go.GetComponent<SpriteRenderer>().color = Color.white;
+        //        Vector3[] pathPoints = { firstPosition, secondPosition };
+        //        line.positionCount = 2;
+        //        line.SetPositions(pathPoints);
 
-                GetComponent<SpriteRenderer>().color = Color.green;
-            }
-            else
-            {
-                GameController.Instance.selectedGOInstance.Enqueue(firstGO);
-                //GameController.Instance.selectedGOInstance.Enqueue(lastGO);
+        //        GameController.Instance.selectedGOInstance.Enqueue(this.gameObject);
 
-                GetComponent<SpriteRenderer>().color = Color.red;
-            }
-        }
-        else
-        {
-            // reset all GO to color white
-            foreach (var go in GameController.Instance.allGOInstance)
-                go.GetComponent<SpriteRenderer>().color = Color.white;
+        //        // reset all GO to color white
+        //        foreach (var go in GameController.Instance.allGOInstance)
+        //            go.GetComponent<SpriteRenderer>().color = Color.white;
 
-            GetComponent<SpriteRenderer>().color = Color.green;
-        }
+        //        GetComponent<SpriteRenderer>().color = Color.green;
+        //    }
+        //    else
+        //    {
+        //        GameController.Instance.selectedGOInstance.Enqueue(firstGO);
+        //        //GameController.Instance.selectedGOInstance.Enqueue(lastGO);
+
+        //        GetComponent<SpriteRenderer>().color = Color.red;
+        //    }
+        //}
+        //else
+        //{
+        //    // reset all GO to color white
+        //    foreach (var go in GameController.Instance.allGOInstance)
+        //        go.GetComponent<SpriteRenderer>().color = Color.white;
+
+        //    GetComponent<SpriteRenderer>().color = Color.green;
+        //}
 
     }
 }
