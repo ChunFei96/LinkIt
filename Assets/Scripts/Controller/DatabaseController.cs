@@ -10,18 +10,26 @@ public class DatabaseController : MonoBehaviour
 {
 
     public static IDbConnection dbconn;
+    public List<Score> dbScores;
+    public List<Patient> dbPatients;
 
     public DatabaseController()
+    {
+        
+    }
+
+    //https://answers.unity.com/questions/743400/database-sqlite-setup-for-unity.html
+
+
+    public void InitDb()
     {
         if (dbconn == null)
         {
             //Debug.Log("dbconn is null");
             ConnectDb();
         }
-        Debug.Log("test DatabaseController");
+        //Debug.Log("test DatabaseController");
     }
-
-    //https://answers.unity.com/questions/743400/database-sqlite-setup-for-unity.html
 
     public void ConnectDb()
     {
@@ -32,13 +40,36 @@ public class DatabaseController : MonoBehaviour
         //Debug.Log("conn: " + conn);
         dbconn = (IDbConnection)new SqliteConnection(conn);
         dbconn.Open(); //Open connection to the database.
+
+        //Init data pulling for Patients + Scores table
+        if (dbPatients == null || dbPatients.Count == 0)
+        {
+            dbPatients = SelectAllPatients();
+
+            Debug.Log("dbPatients count ---> " + dbPatients.Count);
+            Debug.Log("ConnectDb do SelectAllPatients()");
+        }
+
+        if (dbScores == null || dbScores.Count == 0)
+        {
+            dbScores = SelectAllScores();
+            Debug.Log("dbScores count ---> " + dbScores.Count);
+            //Debug.Log("ConnectDb do SelectAllScores()");
+        }
     }
 
-    ~DatabaseController()
+    ~DatabaseController() 
+    {
+        //dbconn.Close();
+        //dbconn = null;
+        //Debug.Log("calling destructor");
+    }
+
+    public void TerminatetDb()
     {
         dbconn.Close();
         dbconn = null;
-        //Debug.Log("calling destructor");
+        Debug.Log("TerminatetDb");
     }
 
     #region Patients
@@ -57,6 +88,15 @@ public class DatabaseController : MonoBehaviour
 
         IDataReader data = ExecuteQuery(query);
         return PatientsToViewModel(data)?.ToArray()[0];
+    }
+
+    public List<Patient> SelectPatientsByIds(List<int> ids)
+    {
+        Debug.Log("SelectPatientsByIds id:" + ids);
+        string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + " where PatientId in (" + string.Join(",", ids) + ")";
+
+        IDataReader data = ExecuteQuery(query);
+        return PatientsToViewModel(data);
     }
 
     public void AddPatient(Patient patient)
@@ -107,7 +147,7 @@ public class DatabaseController : MonoBehaviour
             Patient patient = new Patient(id, name);
             patients.Add(patient);
 
-            Debug.Log("Print id: " + id + "  name: " + name);
+            //Debug.Log("Print id: " + id + "  name: " + name);
         }
 
         data.Close();
@@ -121,7 +161,7 @@ public class DatabaseController : MonoBehaviour
     public List<Score> SelectAllScores()
     {
         string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME;
-
+        //Debug.Log("SelectAllScores query " + query);
         IDataReader data = ExecuteQuery(query);
         return ScoresToViewModel(data);
     }
@@ -153,7 +193,7 @@ public class DatabaseController : MonoBehaviour
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@id", Constants.SqliteCommand.AUTO_INCREMENTAL));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@patientId", score.PatientId.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@gameMode", score.GameMode));
-        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken.ToLongDateString()));
+        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken));
         ExecuteNonQuery(dbcmd);
         Debug.Log("Added new score for patientId :" + score.PatientId);
     }
@@ -167,7 +207,7 @@ public class DatabaseController : MonoBehaviour
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@id", score.Id.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@patientId", score.PatientId.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@gameMode", score.GameMode));
-        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken.ToLongDateString()));
+        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken));
         ExecuteNonQuery(dbcmd);
 
         Debug.Log("Updated Score Id " + score.Id + "'s info.");
@@ -193,16 +233,19 @@ public class DatabaseController : MonoBehaviour
             int id = data.GetInt32(0);
             int patientId = data.GetInt32(1);
             string gameMode = data.GetString(2);
-            DateTime timeTaken = data.GetDateTime(3);
+            string timeTaken = data.GetString(3);
 
             Score score = new Score(id, patientId, gameMode, timeTaken);
             scores.Add(score);
 
-            Debug.Log("Print id: " + id + "  patientId: " + patientId 
-                + "  gameMode: " + gameMode + "  timeTaken: " + timeTaken);
+            //Debug.Log("Print id: " + id + "  patientId: " + patientId 
+            //    + "  gameMode: " + gameMode + "  timeTaken: " + timeTaken);
         }
 
         data.Close();
+
+        //todo update Patient name for display
+        scores = scores.SetPatientNameByPatientIds(dbPatients);
 
         Debug.Log("Total Scores: " + scores.Count);
         return scores;
@@ -215,8 +258,18 @@ public class DatabaseController : MonoBehaviour
     //ExecuteQuery for queries that getting data from database.
     private IDataReader ExecuteQuery(string query)
     {
-        IDbCommand dbcmd = dbconn.CreateCommand();
-        dbcmd.CommandText = query;
+        IDbCommand dbcmd = null;
+
+        try
+        {
+            dbcmd = dbconn.CreateCommand();
+            dbcmd.CommandText = query;
+            
+        }
+        catch(Exception e)
+        {
+            Debug.Log("ExecuteQuery Exception: " + e.Message);
+        }
         return dbcmd.ExecuteReader();
     }
 
@@ -233,9 +286,8 @@ public class DatabaseController : MonoBehaviour
         parameter.Value = value;
         return parameter;
     }
+
     #endregion
-
-
 
     //parameterized sqlite 
     //https://stackoverflow.com/questions/2662999/system-data-sqlite-parameterized-queries-with-multiple-values

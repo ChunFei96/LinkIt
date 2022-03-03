@@ -8,13 +8,18 @@ using UnityEngine.Networking;
 
 public class LeaderboardController : MonoBehaviour
 {
-   private Transform entryTable; // cont
+    private Transform entryTable; // cont
     private Transform entryRow; // row
+    private DatabaseController db;
+    private List<Score> scores;
+    private List<Patient> patients;
 
     List<Transform> rowTransform = new List<Transform>();
 
     private void Awake() {
-        
+        db = new DatabaseController();
+        db.InitDb();
+        //Debug.Log("LeaderboardController connecting db...");
     }
 
     // Start is called before the first frame update
@@ -26,39 +31,46 @@ public class LeaderboardController : MonoBehaviour
         entryRow.gameObject.SetActive(false);
         float rowHeight = 35f;
 
-       for (int i = 0; i < 5; i++)
+        //db.SelectPatientsByIds(new List<int>() { 1, 3 });
+
+        scores = db.dbScores;
+
+        for (int i = 0; i < scores.Count; i++)
         {
             Transform entryTransform = Instantiate(entryRow, entryTable);
             RectTransform entryRecTransform = entryTransform.GetComponent<RectTransform>();
             entryRecTransform.anchoredPosition = new Vector2(0, -rowHeight * i);
             entryTransform.gameObject.SetActive(true);
-
             rowTransform.Add(entryTransform);
         }
 
 
         refreshList();
+        //Debug.Log("LeaderboardController Start()");
+
+        //db.TerminatetDb();
     }
     public void refreshList()
     {
-        setList(/*list*/);
+        setList();
     }
 
     private void setList()
     {
-        int LeaderboardLenght = 5;
+        int LeaderboardLength = scores.Count;
 
-        for (int i = 0; i < 5; i++)
+        Debug.Log("LeaderboardLength: " + LeaderboardLength);
+        for (int i = 0; i < LeaderboardLength; i++)
         {
             Transform childRank = rowTransform[i].GetChild(0);
             Transform childName = rowTransform[i].GetChild(1);
             Transform childTime = rowTransform[i].GetChild(2);
 
-            if (i < LeaderboardLenght)
+            if (i < LeaderboardLength)
             {
                 childRank.gameObject.GetComponent<Text>().text = (i + 1).ToString();
-                childName.gameObject.GetComponent<Text>().text = "User " + (i + 1);
-                childTime.gameObject.GetComponent<Text>().text = "22:00";
+                childName.gameObject.GetComponent<Text>().text = scores[i].PatientName;
+                childTime.gameObject.GetComponent<Text>().text = scores[i].TimeTaken.ToString();
             }
             else
             {
@@ -67,5 +79,10 @@ public class LeaderboardController : MonoBehaviour
                 childTime.gameObject.GetComponent<TextMeshProUGUI>().text = "";
             }
         }
+    }
+
+    void OnDestroy()
+    {
+        
     }
 }
