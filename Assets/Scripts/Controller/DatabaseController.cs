@@ -50,12 +50,12 @@ public class DatabaseController : MonoBehaviour
             Debug.Log("ConnectDb do SelectAllPatients()");
         }
 
-        if (dbScores == null || dbScores.Count == 0)
+        /*if (dbScores == null || dbScores.Count == 0)
         {
             dbScores = SelectAllScores();
             Debug.Log("dbScores count ---> " + dbScores.Count);
             //Debug.Log("ConnectDb do SelectAllScores()");
-        }
+        }*/
     }
 
     ~DatabaseController() 
