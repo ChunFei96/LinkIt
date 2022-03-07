@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class GameController : MonoBehaviour
         selectedGOInstance = new Queue<GameObject>();
         activeGOs = new List<GameObject>();
         linkedListGO = new LinkedList<string>();
+        GameEndPanel.SetActive(false);
     }
 
     #endregion
@@ -27,6 +29,12 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     public float gapOffset;
+
+    [SerializeField]
+    public GameObject GameEndPanel;
+
+    [SerializeField]
+    public Text GameEndTotalTimeText;
 
     #region Public
 
@@ -65,6 +73,18 @@ public class GameController : MonoBehaviour
                     go.GetComponent<SpriteRenderer>().color = Color.white;
 
                 currentNode.GetComponent<SpriteRenderer>().color = Color.green;
+
+                // Game Winning Condition
+                if(ValidationController.Instance.IsNextNodeLast(linkedListGO, lastGO))
+                {
+                    // Stop Timer
+                    TimerController.Instance.StopTimer();
+
+                    // Show Pop up to input patient ID 
+                    GameEndPanel.SetActive(true);
+                    GameEndTotalTimeText.text = "Total Time: " + TimerController.Instance.GetTime();
+
+                }
             }
             else
             {

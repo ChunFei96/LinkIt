@@ -30,6 +30,12 @@ public class PageController : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene");
     }
 
+    public void GoToGamePlay()
+    {
+        Debug.Log("Redirect to: Go To Game Play");
+        SceneManager.LoadScene("GamePlay");
+    }
+
     public void Exit()
     {
         Debug.Log("EXIT");

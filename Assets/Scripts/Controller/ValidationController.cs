@@ -35,4 +35,24 @@ public class ValidationController : MonoBehaviour
 
         return isValid;
     }
+
+    public bool IsNextNodeLast(LinkedList<string> linkedListGO, GameObject nextGO)
+    {
+        bool isValid = false;
+
+        if (linkedListGO != null && nextGO != null)
+        {
+            string nextGOValue = nextGO.GetComponent<Node>().nodeModel.value;
+
+            string lastGOValue = linkedListGO.Last.Value;
+
+            if (lastGOValue == nextGOValue)
+            {
+                isValid = true;
+                Debug.Log("END!!!");
+            }
+        }
+
+        return isValid;
+    }
 }
