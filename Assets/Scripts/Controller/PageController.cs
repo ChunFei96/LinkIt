@@ -30,9 +30,10 @@ public class PageController : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene");
     }
 
-    public void GoToGamePlay()
+    public void GoToGamePlay(Component gameRuleComponenet)
     {
-        Debug.Log("Redirect to: Go To Game Play");
+        Debug.Log("Redirect to: Go To Game Play based on level selection");
+        GlobalManager.Instance.SetSelectedLevel(gameRuleComponenet.GetComponent<Enum>().gameRule);
         SceneManager.LoadScene("GamePlay");
     }
 

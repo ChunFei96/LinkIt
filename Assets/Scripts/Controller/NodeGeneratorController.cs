@@ -11,6 +11,9 @@ public class NodeGeneratorController : MonoBehaviour
         ObjectPooler.Instance.SpawnFromPool("Circle");
 
         // apply game rule based on the level selection
-        GameRuleController.Instance.TMTA();
+        if (GlobalManager.Instance.GetSelectedLevel() == GameRule.TMTA)
+            GameRuleController.Instance.TMTA();
+        else if (GlobalManager.Instance.GetSelectedLevel() == GameRule.TMTB)
+            GameRuleController.Instance.TMTB();
     }
 }
