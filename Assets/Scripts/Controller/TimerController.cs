@@ -25,6 +25,8 @@ public class TimerController : MonoBehaviour
     {
         timeValue = 0;
         isStop = false;
+        
+        timerGO = GameObject.Find("Timer");
     }
 
     // Update is called once per frame

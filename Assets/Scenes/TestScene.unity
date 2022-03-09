@@ -236,7 +236,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Test B
+  m_Text: TMTB
 --- !u!222 &334400845
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1087,7 +1087,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Test A
+  m_Text: TMTA
 --- !u!222 &2093496259
 CanvasRenderer:
   m_ObjectHideFlags: 0

@@ -34,9 +34,22 @@ public class GameController : MonoBehaviour
     public GameObject GameEndPanel;
 
     [SerializeField]
+    
+    public Text TestTypeText;
+    public Text InstructionText;
+    public Text GameEndTestTypeText;
     public Text GameEndTotalTimeText;
+    
+    public InputField GameEndUserIDInput;    
 
     #region Public
+
+    void Start()
+    {
+        TestTypeText = GameObject.Find("TestType").GetComponent<Text>();           
+        InstructionText = GameObject.Find("Instruction").GetComponent<Text>();
+    }
+
 
     public void NodeOnMouseDown(GameObject currentNode)
     {
@@ -82,8 +95,12 @@ public class GameController : MonoBehaviour
 
                     // Show Pop up to input patient ID 
                     GameEndPanel.SetActive(true);
-                    GameEndTotalTimeText.text = "Total Time: " + TimerController.Instance.GetTime();
+                    GameEndTestTypeText = GameObject.Find("GameEndTestType").GetComponent<Text>();
+                    GameEndTotalTimeText = GameObject.Find("GameEndTotalTime").GetComponent<Text>();
+                    GameEndUserIDInput= GameObject.Find("Input_UserID").GetComponent<InputField>();
 
+                    GameEndTotalTimeText.text = "Total Time: " + TimerController.Instance.GetTime();
+                    GameEndTestTypeText.text = TestTypeText.text; 
                 }
             }
             else
@@ -151,4 +168,28 @@ public class GameController : MonoBehaviour
     }
 
     #endregion
+
+    public void SaveRecord(){
+
+        string userID = GameEndUserIDInput.text;
+        
+        string testType = TestTypeText.text;
+        string timeTaken = TimerController.Instance.GetTime();
+        System.DateTime testDateTimeTaken = System.DateTime.Now;
+
+        // Save to db
+
+
+        // if success disable field
+        GameEndUserIDInput.enabled = false;
+
+    }
+
+    public void ClearNodes(){
+        for (int i = 0; i < activeGOs.Count; i++)
+        {
+            GameObject objectToSpawn = GameController.Instance.activeGOs[i];
+            objectToSpawn.SetActive(false);
+        }
+    }
 }

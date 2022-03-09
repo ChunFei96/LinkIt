@@ -72,6 +72,7 @@ public class GameRuleController : MonoBehaviour
                 objectToSpawn.GetComponent<SpriteRenderer>().color = Color.green;
                 objectToSpawn.GetComponent<Node>().nodeModel.isConnect = true;
                 GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);
+                GameController.Instance.TestTypeText.text = "TMTA";
             }
         }
     }
@@ -121,7 +122,8 @@ public class GameRuleController : MonoBehaviour
             {
                 objectToSpawn.GetComponent<SpriteRenderer>().color = Color.green;
                 objectToSpawn.GetComponent<Node>().nodeModel.isConnect = true;
-                GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);
+                GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);                
+                GameController.Instance.TestTypeText.text = "TMTB";
             }
         }
     }
