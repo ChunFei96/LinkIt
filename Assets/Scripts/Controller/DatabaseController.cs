@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using UnityEngine;
+using System.Linq;
 
 
 public class DatabaseController : MonoBehaviour
@@ -99,6 +100,15 @@ public class DatabaseController : MonoBehaviour
         return PatientsToViewModel(data);
     }
 
+    public int? FindPatientIdByPatientName(string name)
+    {
+        string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + " where Name=" + name;
+
+        IDataReader data = ExecuteQuery(query);
+        var Patient = PatientsToViewModel(data)?.ToArray()[0];
+        return Patient?.PatientId;
+    }
+
     public void AddPatient(Patient patient)
     {
         string query = Constants.SqliteCommand.InsertPatient;
@@ -175,6 +185,17 @@ public class DatabaseController : MonoBehaviour
         return ScoresToViewModel(data);
     }
 
+    public List<Score>? SelectTopScoresByPatientName(string name, int counts)
+    {
+        var PatientId = FindPatientIdByPatientName(name);
+        if (PatientId != null)
+        {
+            return SelectScoresByPatientId((int)PatientId)?.OrderBy(c => c.CreatedOn).Take(counts).ToList();  //counts = get the Top-K results
+        }
+        
+        return null;
+    }
+
     public List<Score> SelectScoresByGameMode(string gameMode)
     {
         Debug.Log("SelectScoresByGameMode: " + gameMode);
@@ -194,6 +215,7 @@ public class DatabaseController : MonoBehaviour
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@patientId", score.PatientId.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@gameMode", score.GameMode));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken));
+        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", score.CreatedOn.ToString()));
         ExecuteNonQuery(dbcmd);
         Debug.Log("Added new score for patientId :" + score.PatientId);
     }
@@ -208,6 +230,7 @@ public class DatabaseController : MonoBehaviour
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@patientId", score.PatientId.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@gameMode", score.GameMode));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken));
+        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", score.CreatedOn.ToString()));
         ExecuteNonQuery(dbcmd);
 
         Debug.Log("Updated Score Id " + score.Id + "'s info.");
@@ -234,8 +257,9 @@ public class DatabaseController : MonoBehaviour
             int patientId = data.GetInt32(1);
             string gameMode = data.GetString(2);
             string timeTaken = data.GetString(3);
+            DateTime createdOn = data.GetDateTime(4);
 
-            Score score = new Score(id, patientId, gameMode, timeTaken);
+            Score score = new Score(id, patientId, gameMode, timeTaken, createdOn);
             scores.Add(score);
 
             //Debug.Log("Print id: " + id + "  patientId: " + patientId 
@@ -250,6 +274,7 @@ public class DatabaseController : MonoBehaviour
         Debug.Log("Total Scores: " + scores.Count);
         return scores;
     }
+
     #endregion
 
     #region Common Methods

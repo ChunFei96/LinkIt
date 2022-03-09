@@ -60,9 +60,14 @@ public class LeaderboardController : MonoBehaviour
         
         if(searchUserID.Length>0)
         {
-            setList(db.SelectScoresByPatientId(int.Parse(searchUserID)) );
+            setList(db.SelectScoresByPatientId(int.Parse(searchUserID)));
+
+            //to-be confirmed
+            //SelectTopScoresByPatientName()
+
         }
-        else{
+        else
+        {
             setList(db.SelectAllScores());
         }
     }
@@ -78,6 +83,7 @@ public class LeaderboardController : MonoBehaviour
             Transform childName = rowTransform[i].GetChild(1);
             Transform childTest= rowTransform[i].GetChild(2);
             Transform childTime = rowTransform[i].GetChild(3);
+            //Transform childCreatedOn = rowTransform[i].GetChild(4);
 
             //if (i < LeaderboardLength)
             if (i < LeaderboardLength)
@@ -86,6 +92,7 @@ public class LeaderboardController : MonoBehaviour
                 childName.gameObject.GetComponent<Text>().text = _score[i].PatientName;
                 childTest.gameObject.GetComponent<Text>().text = _score[i].GameMode;               
                 childTime.gameObject.GetComponent<Text>().text = _score[i].TimeTaken.ToString();
+                //childCreatedOn.gameObject.GetComponent<Text>().text = _score[i].CreatedOn.ToString();
             }
             else
             {
@@ -93,6 +100,7 @@ public class LeaderboardController : MonoBehaviour
                 childName.gameObject.GetComponent<Text>().text = "";
                 childTest.gameObject.GetComponent<Text>().text = "";     
                 childTime.gameObject.GetComponent<Text>().text = "";
+                //childCreatedOn.gameObject.GetComponent<Text>().text = "";
             }
 
             if(i+1 == recordsPerPage){
