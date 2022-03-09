@@ -31,8 +31,8 @@ public static class Constants
         public const string UpdatePatient = "UPDATE Patient SET Name = @name WHERE PatientId = @id ";
         public const string DeletePatient = "DELETE FROM Patient WHERE PatientId = @id";
 
-        public const string InsertScore = "INSERT INTO Score (Id,PatientId,GameMode,TimeTaken) VALUES (@id,@patientId,@gameMode,@timeTaken)";
-        public const string UpdateScore = "UPDATE Score SET GameMode = @gameMode, TimeTaken = @timeTaken WHERE PatientId = @patientId ";
+        public const string InsertScore = "INSERT INTO Score (Id,PatientId,GameMode,TimeTaken,CreatedOn) VALUES (@id,@patientId,@gameMode,@timeTaken,@createdOn)";
+        public const string UpdateScore = "UPDATE Score SET GameMode = @gameMode, TimeTaken = @timeTaken, CreatedOn =  @createdOn WHERE PatientId = @patientId ";
         public const string DeleteScore = "DELETE FROM Score WHERE Id = @id";
 
 

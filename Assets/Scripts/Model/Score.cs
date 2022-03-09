@@ -11,19 +11,23 @@ public class Score{
     public string PatientName;
     public string GameMode;
     public string TimeTaken;
+    public DateTime CreatedOn;
     
-    public Score(int _PatientId, string _GameMode, string _TimeTaken){
+    public Score(int _PatientId, string _GameMode, string _TimeTaken, DateTime _CreatedOn)
+    {
         PatientId = _PatientId;
         GameMode = _GameMode;
         TimeTaken = _TimeTaken;
+        CreatedOn = _CreatedOn;
     }
 
-    public Score(int _Id, int _PatientId, string _GameMode, string _TimeTaken)
+    public Score(int _Id, int _PatientId, string _GameMode, string _TimeTaken, DateTime _CreatedOn)
     {
         Id = _Id;
         PatientId = _PatientId;
         GameMode = _GameMode;
         TimeTaken = _TimeTaken;
+        CreatedOn = _CreatedOn;
     }
 
    
