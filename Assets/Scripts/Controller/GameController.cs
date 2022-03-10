@@ -83,7 +83,12 @@ public class GameController : MonoBehaviour
 
                 // reset all GO to color white
                 foreach (var go in activeGOs)
-                    go.GetComponent<SpriteRenderer>().color = Color.white;
+                {
+                    if (!go.GetComponent<Node>().nodeModel.isConnect)
+                        go.GetComponent<SpriteRenderer>().color = Color.white;
+                    else
+                        go.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+                }
 
                 currentNode.GetComponent<SpriteRenderer>().color = Color.green;
 
@@ -115,7 +120,12 @@ public class GameController : MonoBehaviour
         {
             // reset all GO to color white
             foreach (var go in activeGOs)
-                go.GetComponent<SpriteRenderer>().color = Color.white;
+            {
+                if (!go.GetComponent<Node>().nodeModel.isConnect)
+                    go.GetComponent<SpriteRenderer>().color = Color.white;
+                else
+                    go.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 0.3f);
+            }
 
             currentNode.GetComponent<SpriteRenderer>().color = Color.green;
         }
@@ -186,10 +196,11 @@ public class GameController : MonoBehaviour
     }
 
     public void ClearNodes(){
-        for (int i = 0; i < activeGOs.Count; i++)
-        {
-            GameObject objectToSpawn = GameController.Instance.activeGOs[i];
-            objectToSpawn.SetActive(false);
-        }
+        ObjectPooler.Instance.EnqueueToPool();
+        //for (int i = 0; i < activeGOs.Count; i++)
+        //{
+        //    GameObject objectToSpawn = GameController.Instance.activeGOs[i];
+        //    objectToSpawn.SetActive(false);
+        //}
     }
 }

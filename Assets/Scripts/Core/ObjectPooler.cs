@@ -79,6 +79,16 @@ public class ObjectPooler : MonoBehaviour
         for (int i = 0; i < GameController.Instance.activeGOs.Count; i++)
         {
             GameObject GO = GameController.Instance.activeGOs[i];
+
+            // remove visibility
+            GO.SetActive(false);
+
+            // reset all GO to white
+            GO.GetComponent<SpriteRenderer>().color = Color.white;
+
+            // reset isConnect to false
+            GO.GetComponent<Node>().nodeModel.isConnect = false;
+
             tagName = GO.tag;
 
             objectPool.Enqueue(GO);
@@ -86,8 +96,8 @@ public class ObjectPooler : MonoBehaviour
 
         if(tagName != string.Empty && objectPool != null)
         {
-            // return unused GO back to object pool
-            poolDictionary.Add(tagName, objectPool);
+            // return unused GO back to object pool by tag
+            poolDictionary[tagName] = objectPool;
 
             // no more active GO on the scene
             GameController.Instance.activeGOs = new List<GameObject>();
