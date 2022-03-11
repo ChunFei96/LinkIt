@@ -37,8 +37,6 @@ public class LeaderboardController : MonoBehaviour
         entryRow.gameObject.SetActive(false);
         float rowHeight = 35f;
 
-        //db.SelectPatientsByIds(new List<int>() { 1, 3 });
-
         for (int i = 0; i < recordsPerPage ; i++)
         {
             Transform entryTransform = Instantiate(entryRow, entryTable);
@@ -47,23 +45,17 @@ public class LeaderboardController : MonoBehaviour
             entryTransform.gameObject.SetActive(true);
             rowTransform.Add(entryTransform);
         }
-
+        
 
         refreshList();
-        //Debug.Log("LeaderboardController Start()");
-
-        //db.TerminatetDb();
     }
     public void refreshList()
     {
-        String searchUserID = inputSearch.text;
+        String searchUserName = inputSearch.text;
         
-        if(searchUserID.Length>0)
+        if(searchUserName.Length>0)
         {
-            setList(db.SelectScoresByPatientId(int.Parse(searchUserID)));
-
-            //to-be confirmed
-            //SelectTopScoresByPatientName()
+            setList(db.SelectTopScoresByPatientName(searchUserName,10));
 
         }
         else
@@ -72,9 +64,22 @@ public class LeaderboardController : MonoBehaviour
         }
     }
 
+    private void ClearAllRows()
+    {
+        Debug.Log("childCount" + entryTable.childCount.ToString());
+
+        //Remove all rows
+        for (int i = 0; i < entryTable.childCount; i++)
+        {
+            Destroy(entryTable.GetChild(i));
+        }
+    }
+
     private void setList(List<Score> _score)
     {
         int LeaderboardLength = _score.Count;
+
+        //ClearAllRows();
 
         for (int i = 0; i < LeaderboardLength; i++)
         {
@@ -85,7 +90,6 @@ public class LeaderboardController : MonoBehaviour
             Transform childTime = rowTransform[i].GetChild(3);
             Transform childCreatedOn = rowTransform[i].GetChild(4);
 
-            //if (i < LeaderboardLength)
             if (i < LeaderboardLength)
             {
                 childRank.gameObject.GetComponent<Text>().text = (i + 1).ToString();

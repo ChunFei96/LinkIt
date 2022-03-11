@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     #region Singleton
 
     public static GameController Instance;
+    private DatabaseController db;
 
     private void Awake()
     {
@@ -16,6 +17,9 @@ public class GameController : MonoBehaviour
         activeGOs = new List<GameObject>();
         linkedListGO = new LinkedList<string>();
         GameEndPanel.SetActive(false);
+
+        db = new DatabaseController();
+        db.InitDb();
     }
 
     #endregion
@@ -181,18 +185,27 @@ public class GameController : MonoBehaviour
 
     public void SaveRecord(){
 
-        string userID = GameEndUserIDInput.text;
-        
-        string testType = TestTypeText.text;
-        string timeTaken = TimerController.Instance.GetTime();
-        System.DateTime testDateTimeTaken = System.DateTime.Now;
+        try
+        {
+            string username = GameEndUserIDInput.text;
 
-        // Save to db
+            int userID = (int)db.FindPatientIdByPatientName(username);
+            string GameMode = TestTypeText.text;
+            string TimeTaken = TimerController.Instance.GetTime();
+            System.DateTime CreatedOn = System.DateTime.Now;
 
+            Score saveScore = new Score(userID, GameMode, TimeTaken, CreatedOn);
 
-        // if success disable field
-        GameEndUserIDInput.enabled = false;
+            // Save to db
+            db.AddScore(saveScore);
 
+            // if success disable field
+            GameEndUserIDInput.enabled = false;
+        } 
+        catch (System.Exception e)
+        {
+            Debug.Log("GameController/SaveRecord() Exception:" + e.Message);
+        }
     }
 
     public void ClearNodes(){

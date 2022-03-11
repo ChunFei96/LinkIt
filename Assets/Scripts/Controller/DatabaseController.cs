@@ -85,7 +85,7 @@ public class DatabaseController : MonoBehaviour
     public Patient SelectPatientById(int id)
     {
         Debug.Log("SelectPatientById id:" + id);
-        string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + " where PatientId=" + id;
+        string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + String.Format(" where PatientId='{0}'", id);
 
         IDataReader data = ExecuteQuery(query);
         return PatientsToViewModel(data)?.ToArray()[0];
@@ -102,11 +102,21 @@ public class DatabaseController : MonoBehaviour
 
     public int? FindPatientIdByPatientName(string name)
     {
-        string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + " where Name=" + name;
+        string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + String.Format(" where Name='{0}'", name);
+        Debug.Log("FindPatientIdByPatientName query:" + query);
 
         IDataReader data = ExecuteQuery(query);
-        var Patient = PatientsToViewModel(data)?.ToArray()[0];
-        return Patient?.PatientId;
+
+        var patients = PatientsToViewModel(data);
+        if (patients != null && patients.Count > 0)
+        {
+            var Patient = PatientsToViewModel(data).ToList()[0];
+            return Patient.PatientId; 
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public void AddPatient(Patient patient)
@@ -190,7 +200,8 @@ public class DatabaseController : MonoBehaviour
         var PatientId = FindPatientIdByPatientName(name);
         if (PatientId != null)
         {
-            return SelectScoresByPatientId((int)PatientId)?.OrderBy(c => c.CreatedOn).Take(counts).ToList();  //counts = get the Top-K results
+            var scores = SelectScoresByPatientId((int)PatientId);
+            return scores?.OrderByDescending(c => c.CreatedOn).Take(counts).ToList();
         }
         
         return null;
@@ -268,7 +279,6 @@ public class DatabaseController : MonoBehaviour
 
         data.Close();
 
-        //todo update Patient name for display
         scores = scores.SetPatientNameByPatientIds(dbPatients);
 
         Debug.Log("Total Scores: " + scores.Count);
@@ -293,6 +303,7 @@ public class DatabaseController : MonoBehaviour
         }
         catch(Exception e)
         {
+            dbcmd.Transaction.Rollback();
             Debug.Log("ExecuteQuery Exception: " + e.Message);
         }
         return dbcmd.ExecuteReader();
@@ -301,7 +312,15 @@ public class DatabaseController : MonoBehaviour
     //ExecuteNonQuery for queries that does not return any data. Such as update, insert, delete
     private void ExecuteNonQuery(IDbCommand dbcmd)
     {
-        bool querystatus = dbcmd.ExecuteNonQuery() != 0; //result '0' indicates the sql operation has failed
+        try
+        {
+            bool querystatus = dbcmd.ExecuteNonQuery() != 0; //result '0' indicates the sql operation has failed
+        }
+        catch (Exception e)
+        {
+            dbcmd.Transaction.Rollback();
+            Debug.Log("ExecuteQuery Exception: " + e.Message);
+        }
     }
 
     private IDbDataParameter CreateParameter(IDbCommand dbcmd, string columnName, string value)
