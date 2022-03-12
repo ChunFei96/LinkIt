@@ -11,8 +11,8 @@ public class DatabaseController : MonoBehaviour
 {
 
     public static IDbConnection dbconn;
-    public List<Score> dbScores;
-    public List<Patient> dbPatients;
+    public static List<Score> dbScores;
+    public static List<Patient> dbPatients;
 
     public DatabaseController()
     {
@@ -34,7 +34,6 @@ public class DatabaseController : MonoBehaviour
 
     public void ConnectDb()
     {
-        //Debug.Log("test ConnectDb");
         var database_name = "LinkItDb.db";
         var conn = "URI=file:" + Application.dataPath + "/database/" + database_name;
 
@@ -46,17 +45,14 @@ public class DatabaseController : MonoBehaviour
         if (dbPatients == null || dbPatients.Count == 0)
         {
             dbPatients = SelectAllPatients();
-
-            Debug.Log("dbPatients count ---> " + dbPatients.Count);
-            Debug.Log("ConnectDb do SelectAllPatients()");
+            //Debug.Log("dbPatients count ---> " + dbPatients.Count);
         }
 
-        /*if (dbScores == null || dbScores.Count == 0)
+        if (dbScores == null || dbScores.Count == 0)
         {
             dbScores = SelectAllScores();
-            Debug.Log("dbScores count ---> " + dbScores.Count);
-            //Debug.Log("ConnectDb do SelectAllScores()");
-        }*/
+            //Debug.Log("dbScores count ---> " + dbScores.Count);
+        }
     }
 
     ~DatabaseController() 
@@ -172,7 +168,7 @@ public class DatabaseController : MonoBehaviour
 
         data.Close();
 
-        Debug.Log("Total patients: " + patients.Count);
+        //Debug.Log("Total patients: " + patients.Count);
         return patients;
     }
     #endregion
@@ -226,7 +222,7 @@ public class DatabaseController : MonoBehaviour
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@patientId", score.PatientId.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@gameMode", score.GameMode));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken));
-        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", score.CreatedOn.ToString()));
+        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", score.CreatedOn));
         ExecuteNonQuery(dbcmd);
         Debug.Log("Added new score for patientId :" + score.PatientId);
     }
@@ -241,7 +237,7 @@ public class DatabaseController : MonoBehaviour
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@patientId", score.PatientId.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@gameMode", score.GameMode));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken));
-        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", score.CreatedOn.ToString()));
+        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", score.CreatedOn));
         ExecuteNonQuery(dbcmd);
 
         Debug.Log("Updated Score Id " + score.Id + "'s info.");
@@ -262,26 +258,28 @@ public class DatabaseController : MonoBehaviour
     private List<Score> ScoresToViewModel(IDataReader data)
     {
         List<Score> scores = new List<Score>();
-        while (data.Read())
+        try
         {
-            int id = data.GetInt32(0);
-            int patientId = data.GetInt32(1);
-            string gameMode = data.GetString(2);
-            string timeTaken = data.GetString(3);
-            DateTime createdOn = data.GetDateTime(4);
+            while (data.Read())
+            {
+                int id = data.GetInt32(0);
+                int patientId = data.GetInt32(1);
+                string gameMode = data.GetString(2);
+                string timeTaken = data.GetString(3);
+                string createdOn = data.GetString(4);
 
-            Score score = new Score(id, patientId, gameMode, timeTaken, createdOn);
-            scores.Add(score);
+                Score score = new Score(id, patientId, gameMode, timeTaken, createdOn);
+                scores.Add(score);
+            }
 
-            //Debug.Log("Print id: " + id + "  patientId: " + patientId 
-            //    + "  gameMode: " + gameMode + "  timeTaken: " + timeTaken);
+            data.Close();
+            scores = scores.SetPatientNameByPatientIds(dbPatients);
+            Debug.Log("Total Scores: " + scores.Count);
         }
-
-        data.Close();
-
-        scores = scores.SetPatientNameByPatientIds(dbPatients);
-
-        Debug.Log("Total Scores: " + scores.Count);
+        catch (Exception e)
+        {
+            Debug.Log("ScoresToViewModel exception: " + e.Message);
+        }
         return scores;
     }
 

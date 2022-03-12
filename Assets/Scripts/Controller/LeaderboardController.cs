@@ -45,8 +45,8 @@ public class LeaderboardController : MonoBehaviour
             entryTransform.gameObject.SetActive(true);
             rowTransform.Add(entryTransform);
         }
-        
 
+        
         refreshList();
     }
     public void refreshList()

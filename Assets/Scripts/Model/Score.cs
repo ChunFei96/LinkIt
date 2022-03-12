@@ -11,9 +11,9 @@ public class Score{
     public string PatientName;
     public string GameMode;
     public string TimeTaken;
-    public DateTime CreatedOn;
+    public string CreatedOn;
     
-    public Score(int _PatientId, string _GameMode, string _TimeTaken, DateTime _CreatedOn)
+    public Score(int _PatientId, string _GameMode, string _TimeTaken, string _CreatedOn)
     {
         PatientId = _PatientId;
         GameMode = _GameMode;
@@ -21,7 +21,7 @@ public class Score{
         CreatedOn = _CreatedOn;
     }
 
-    public Score(int _Id, int _PatientId, string _GameMode, string _TimeTaken, DateTime _CreatedOn)
+    public Score(int _Id, int _PatientId, string _GameMode, string _TimeTaken, string _CreatedOn)
     {
         Id = _Id;
         PatientId = _PatientId;
@@ -37,18 +37,20 @@ public static class ScoreExtensions
 {
     public static List<Score> SetPatientNameByPatientIds(this List<Score> scores, List<Patient> patients)
     {
-
-        foreach(var i in scores)
+        if (patients != null && patients.Count > 0)
         {
-            Debug.Log("i.PatientId: " + i.PatientId);
-            Patient patient = patients.Where(c => c.PatientId == i.PatientId).FirstOrDefault();
-
-            if (patient != null)
+            foreach (var i in scores)
             {
-                i.PatientName = patient.Name;
+                Debug.Log("i.PatientId: " + i.PatientId);
+                Patient patient = patients.Where(c => c.PatientId == i.PatientId).FirstOrDefault();
+
+                if (patient != null)
+                {
+                    i.PatientName = patient.Name;
+                }
             }
         }
-
+        
         return scores;
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
@@ -18,8 +19,7 @@ public class GameController : MonoBehaviour
         linkedListGO = new LinkedList<string>();
         GameEndPanel.SetActive(false);
 
-        db = new DatabaseController();
-        db.InitDb();
+        
     }
 
     #endregion
@@ -187,19 +187,26 @@ public class GameController : MonoBehaviour
 
         try
         {
+            db = new DatabaseController();
+            db.InitDb();
+
             string username = GameEndUserIDInput.text;
             int userID = (int)db.FindPatientIdByPatientName(username);
             string GameMode = TestTypeText.text;
             string TimeTaken = TimerController.Instance.GetTime();
-            System.DateTime CreatedOn = System.DateTime.Now;
+            string CreatedOn = System.DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
 
             Score saveScore = new Score(userID, GameMode, TimeTaken, CreatedOn);
 
             // Save to db
             db.AddScore(saveScore);
+            Debug.Log("db saveScore successfuly!");
 
             // if success disable field
             GameEndUserIDInput.enabled = false;
+
+            ClearNodes();
+            SceneManager.LoadScene("LeaderboardScene");
         } 
         catch (System.Exception e)
         {
