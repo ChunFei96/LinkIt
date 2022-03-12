@@ -110,7 +110,7 @@ public class DatabaseController : MonoBehaviour
         var patients = PatientsToViewModel(data);
         if (patients != null && patients.Count > 0)
         {
-            var Patient = PatientsToViewModel(data).ToList()[0];
+            var Patient = patients.ToList()[0];
             return Patient.PatientId; 
         }
         else

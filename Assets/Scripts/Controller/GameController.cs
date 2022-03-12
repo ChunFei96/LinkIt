@@ -188,7 +188,6 @@ public class GameController : MonoBehaviour
         try
         {
             string username = GameEndUserIDInput.text;
-
             int userID = (int)db.FindPatientIdByPatientName(username);
             string GameMode = TestTypeText.text;
             string TimeTaken = TimerController.Instance.GetTime();
