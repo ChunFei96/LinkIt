@@ -197,7 +197,8 @@ public class DatabaseController : MonoBehaviour
         if (PatientId != null)
         {
             var scores = SelectScoresByPatientId((int)PatientId);
-            return scores?.OrderByDescending(c => c.CreatedOn).Take(counts).ToList();
+            List<Score> scoreList = scores?.OrderByDescending(c => DateTime.Parse(c.CreatedOn)).Take(10).ToList();
+            return scoreList;
         }
         
         return null;

@@ -145,7 +145,7 @@ public class GameController : MonoBehaviour
         {
             Count = 0;
             float xRand = Random.Range(-8.0f, 8.0f);
-            float yRand = Random.Range(-4.0f, 4.0f);
+            float yRand = Random.Range(-4.0f, 3.0f);
             pos = new Vector2(xRand, yRand);
 
             foreach (var go in activeGOs)

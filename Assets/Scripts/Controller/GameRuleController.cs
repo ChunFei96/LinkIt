@@ -21,17 +21,12 @@ public class GameRuleController : MonoBehaviour
     [System.Serializable]
     public class TMTARuleSelectors
     {
-        public bool numberic = true;
-        public bool alphabetic = false;
         public string instructionText;
     }
 
     [System.Serializable]
     public class TMTBRuleSelectors
     {
-        public bool numberic = false;
-        public bool alphabetic = false;
-        public bool mix = true;
         public string instructionText;
     }
 
@@ -73,6 +68,7 @@ public class GameRuleController : MonoBehaviour
                 objectToSpawn.GetComponent<Node>().nodeModel.isConnect = true;
                 GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);
                 GameController.Instance.TestTypeText.text = "TMTA";
+                GameController.Instance.InstructionText.text = TMTARuleSelector.instructionText;
             }
         }
     }
@@ -124,6 +120,7 @@ public class GameRuleController : MonoBehaviour
                 objectToSpawn.GetComponent<Node>().nodeModel.isConnect = true;
                 GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);                
                 GameController.Instance.TestTypeText.text = "TMTB";
+                GameController.Instance.InstructionText.text = TMTBRuleSelector.instructionText;
             }
         }
     }
