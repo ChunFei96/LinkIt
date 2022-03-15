@@ -204,6 +204,35 @@ public class DatabaseController : MonoBehaviour
         return null;
     }
 
+     public List<Score> SelectScoreLeaderboard(string name, string sortBy)
+    {
+        Debug.Log("SelectScoreLeaderboard");
+
+        string where = "";
+        var PatientId = FindPatientIdByPatientName(name);
+        if(PatientId.HasValue) {
+            where = " where PatientId=" + PatientId;
+        }
+
+        string orderBy = "";
+
+        if(sortBy.Length>0 && sortBy == Constants.ScoreTable.TIME){
+            orderBy = " order by " + Constants.ScoreTable.TIME + " ASC";
+        }
+
+        else if(sortBy.Length>0 && sortBy == Constants.ScoreTable.CREATE_ON){
+            orderBy = " order by " + Constants.ScoreTable.CREATE_ON + " DESC";
+        }
+         
+        string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME + where + orderBy;
+        Debug.Log("query: " + query);
+
+        IDataReader data = ExecuteQuery(query);
+        List<Score> scoreList = ScoresToViewModel(data);
+
+        return scoreList;
+    }
+
     public List<Score> SelectScoresByGameMode(string gameMode)
     {
         Debug.Log("SelectScoresByGameMode: " + gameMode);

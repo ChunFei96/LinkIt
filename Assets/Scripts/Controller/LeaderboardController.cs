@@ -12,7 +12,6 @@ public class LeaderboardController : MonoBehaviour
     private Transform entryTable; // cont
     private Transform entryRow; // row
     private DatabaseController db;
-    private List<Score> scores;
     private List<Patient> patients;
 
     List<Transform> rowTransform = new List<Transform>();
@@ -45,23 +44,18 @@ public class LeaderboardController : MonoBehaviour
             entryTransform.gameObject.SetActive(true);
             rowTransform.Add(entryTransform);
         }
-
         
         refreshList();
     }
     public void refreshList()
     {
-        String searchUserName = inputSearch.text;
-        
-        if(searchUserName.Length>0)
-        {
-            setList(db.SelectTopScoresByPatientName(searchUserName,10));
+        String searchText = inputSearch.text;
 
-        }
-        else
-        {
-            setList(db.SelectAllScores());
-        }
+        String sortBy = Constants.ScoreTable.CREATE_ON;
+        
+        //Debug.Log("searchText: " + searchText + " sortBy: " + sortBy);
+        
+        setList(db.SelectScoreLeaderboard(searchText, sortBy));
     }
 
     private void ClearAllRows()
@@ -85,14 +79,16 @@ public class LeaderboardController : MonoBehaviour
         {
             
             Transform childRank = rowTransform[i].GetChild(0);
-            Transform childName = rowTransform[i].GetChild(1);
-            Transform childTest= rowTransform[i].GetChild(2);
-            Transform childTime = rowTransform[i].GetChild(3);
-            Transform childCreatedOn = rowTransform[i].GetChild(4);
+            Transform childID = rowTransform[i].GetChild(1);
+            Transform childName = rowTransform[i].GetChild(2);
+            Transform childTest= rowTransform[i].GetChild(3);
+            Transform childTime = rowTransform[i].GetChild(4);
+            Transform childCreatedOn = rowTransform[i].GetChild(5);
 
             if (i < LeaderboardLength)
             {
                 childRank.gameObject.GetComponent<Text>().text = (i + 1).ToString();
+                childID.gameObject.GetComponent<Text>().text = _score[i].PatientId.ToString();
                 childName.gameObject.GetComponent<Text>().text = _score[i].PatientName;
                 childTest.gameObject.GetComponent<Text>().text = _score[i].GameMode;               
                 childTime.gameObject.GetComponent<Text>().text = _score[i].TimeTaken.ToString();
@@ -100,7 +96,8 @@ public class LeaderboardController : MonoBehaviour
             }
             else
             {
-                childRank.gameObject.GetComponent<Text>().text = "";
+                childRank.gameObject.GetComponent<Text>().text = "";                
+                childID.gameObject.GetComponent<Text>().text = "";
                 childName.gameObject.GetComponent<Text>().text = "";
                 childTest.gameObject.GetComponent<Text>().text = "";     
                 childTime.gameObject.GetComponent<Text>().text = "";
