@@ -190,13 +190,18 @@ public class GameController : MonoBehaviour
             db = new DatabaseController();
             db.InitDb();
 
-            string username = GameEndUserIDInput.text;
-            int userID = (int)db.FindPatientIdByPatientName(username);
+            string paitientID = GameEndUserIDInput.text;
             string GameMode = TestTypeText.text;
             string TimeTaken = TimerController.Instance.GetTime();
             string CreatedOn = System.DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
 
-            Score saveScore = new Score(userID, GameMode, TimeTaken, CreatedOn);
+            if(!db.ValidPatientId(paitientID)){
+                Debug.Log("Invalid id: " + paitientID);
+                return;
+            }
+
+
+            Score saveScore = new Score(paitientID, GameMode, TimeTaken, CreatedOn);
 
             // Save to db
             db.AddScore(saveScore);

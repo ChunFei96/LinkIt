@@ -13,22 +13,30 @@ public class LeaderboardController : MonoBehaviour
     private Transform entryRow; // row
     private DatabaseController db;
     private List<Patient> patients;
-
+    
     List<Transform> rowTransform = new List<Transform>();
 
     private InputField inputSearch;
-    
+    private static GameObject errorMsg;
+    private static GameObject sortOptionTestDate;
+    private static GameObject sortOptionTimeTaken;
 
     private void Awake() {
         db = new DatabaseController();
         db.InitDb();
         //Debug.Log("LeaderboardController connecting db...");
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
         inputSearch = GameObject.Find("input_Search").GetComponent<InputField>();
+        errorMsg = GameObject.Find("txt_ErrorMsg");
+        errorMsg.GetComponent<Text>().text = "";
+
+        sortOptionTestDate = GameObject.Find("sortBy_TestDate");
+        sortOptionTimeTaken = GameObject.Find("sortBy_Time");
 
          // Create 10 rows
         entryTable = GameObject.Find("Table").transform;
@@ -43,6 +51,14 @@ public class LeaderboardController : MonoBehaviour
             entryRecTransform.anchoredPosition = new Vector2(0, -rowHeight * i);
             entryTransform.gameObject.SetActive(true);
             rowTransform.Add(entryTransform);
+
+            // clear text
+            rowTransform[i].GetChild(0).gameObject.GetComponent<Text>().text = "";
+            rowTransform[i].GetChild(1).gameObject.GetComponent<Text>().text = "";
+            rowTransform[i].GetChild(2).gameObject.GetComponent<Text>().text = "";
+            rowTransform[i].GetChild(3).gameObject.GetComponent<Text>().text = "";
+            rowTransform[i].GetChild(4).gameObject.GetComponent<Text>().text = "";
+            rowTransform[i].GetChild(5).gameObject.GetComponent<Text>().text = "";
         }
         
         refreshList();
@@ -51,9 +67,26 @@ public class LeaderboardController : MonoBehaviour
     {
         String searchText = inputSearch.text;
 
+        if(!string.IsNullOrEmpty(searchText)){
+            if(!db.ValidPatientId(searchText)){
+                errorMsg.GetComponent<Text>().text = "Error: Invalid id!";               
+
+                Debug.Log("Invalid id: " + searchText);
+                return;
+            }
+        }
+
         String sortBy = Constants.ScoreTable.CREATE_ON;
-        
-        //Debug.Log("searchText: " + searchText + " sortBy: " + sortBy);
+
+        if(sortOptionTestDate.GetComponent<Toggle>().isOn){
+            sortBy = Constants.ScoreTable.CREATE_ON;        
+        }        
+        else{
+            sortBy = Constants.ScoreTable.TIME;        
+        }
+
+        Debug.Log("searchText: " + searchText + " sortBy: " + sortBy);
+
         
         setList(db.SelectScoreLeaderboard(searchText, sortBy));
     }
@@ -75,7 +108,7 @@ public class LeaderboardController : MonoBehaviour
 
         //ClearAllRows();
 
-        for (int i = 0; i < LeaderboardLength; i++)
+        for (int i = 0; i < recordsPerPage; i++)
         {
             
             Transform childRank = rowTransform[i].GetChild(0);

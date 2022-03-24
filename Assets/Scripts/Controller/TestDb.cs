@@ -16,7 +16,7 @@ public class TestDb : MonoBehaviour
         Patient patient_a = new Patient("Jack");
         db.AddPatient(patient_a);
 
-        Patient existing_patient = new Patient(4,"Bollo");
+        Patient existing_patient = new Patient("4","Bollo");
         db.UpdatePatient(existing_patient);
 
         db.DeletePatient(5);
