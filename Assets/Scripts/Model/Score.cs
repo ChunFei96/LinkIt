@@ -7,13 +7,13 @@ using System.Text;
 
 public class Score{
     public int Id;
-    public int PatientId;
+    public string PatientId;
     public string PatientName;
     public string GameMode;
     public string TimeTaken;
     public string CreatedOn;
     
-    public Score(int _PatientId, string _GameMode, string _TimeTaken, string _CreatedOn)
+    public Score(string _PatientId, string _GameMode, string _TimeTaken, string _CreatedOn)
     {
         PatientId = _PatientId;
         GameMode = _GameMode;
@@ -21,7 +21,7 @@ public class Score{
         CreatedOn = _CreatedOn;
     }
 
-    public Score(int _Id, int _PatientId, string _GameMode, string _TimeTaken, string _CreatedOn)
+    public Score(int _Id, string _PatientId, string _GameMode, string _TimeTaken, string _CreatedOn)
     {
         Id = _Id;
         PatientId = _PatientId;

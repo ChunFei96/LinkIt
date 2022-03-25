@@ -10,6 +10,8 @@ public static class Constants
         public const string ID = "PatientId";
         public const string GAME_MODE = "GameMode";
         public const string TIME = "TimeTaken";
+        
+        public const string CREATE_ON = "CreatedOn";
     }
 
     public static class PatientTable

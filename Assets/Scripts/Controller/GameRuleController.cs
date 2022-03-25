@@ -36,7 +36,7 @@ public class GameRuleController : MonoBehaviour
 
     private List<char> alphaList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray().ToList();
 
-    private List<int> numList = Enumerable.Range(1, 25).ToList();
+    private List<int> numList = Enumerable.Range(1, 5).ToList(); //25
 
     public void TMTA()
     {

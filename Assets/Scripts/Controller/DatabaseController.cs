@@ -73,6 +73,33 @@ public class DatabaseController : MonoBehaviour
     }
 
     #region Patients
+
+    public bool ValidPatientId(string patientId){
+
+        Debug.Log("validPatientId patientId:" + patientId);
+        string p = FindPatientIdByPatientId(patientId);
+
+        if( p != null){
+            
+            Debug.Log("validPatientId:" + true);
+
+            return true;
+        }
+        else {
+            Debug.Log("validPatientId:" + false);
+            return false;
+        }        
+    }
+
+    public Patient FindPatientByPatientId(string patientId)
+    {
+        string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + String.Format(" where PatientId='{0}'", patientId);
+        Debug.Log("FindPatientIdByPatientName query:" + query);
+
+        IDataReader data = ExecuteQuery(query);
+        return PatientsToViewModel(data)?.ToArray()[0];
+    }
+
     public List<Patient> SelectAllPatients()
     {
         string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME;
@@ -94,12 +121,12 @@ public class DatabaseController : MonoBehaviour
     {
         Debug.Log("SelectPatientsByIds id:" + ids);
         string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + " where PatientId in (" + string.Join(",", ids) + ")";
-
+        Debug.Log("query:" + query);
         IDataReader data = ExecuteQuery(query);
         return PatientsToViewModel(data);
     }
 
-    public int? FindPatientIdByPatientName(string name)
+    public string? FindPatientIdByPatientName(string name)
     {
         string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + String.Format(" where Name='{0}'", name);
         Debug.Log("FindPatientIdByPatientName query:" + query);
@@ -117,6 +144,26 @@ public class DatabaseController : MonoBehaviour
             return null;
         }
     }
+    
+    public string? FindPatientIdByPatientId(string patientId)
+    {
+        string query = Constants.SqliteCommand.SelectAll + Constants.PatientTable.TABLE_NAME + String.Format(" where PatientId='{0}'", patientId);
+        Debug.Log("FindPatientIdByPatientName query:" + query);
+
+        IDataReader data = ExecuteQuery(query);
+
+        var patients = PatientsToViewModel(data);
+        if (patients != null && patients.Count > 0)
+        {
+            var Patient = patients.ToList()[0];
+            return Patient.PatientId; 
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 
     public void AddPatient(Patient patient)
     {
@@ -160,10 +207,11 @@ public class DatabaseController : MonoBehaviour
         List<Patient> patients = new List<Patient>();
         while (data.Read())
         {
-            int id = data.GetInt32(0);
-            string name = data.GetString(1);
+            int Id = data.GetInt32(0);
+            string patientId = data.GetString(1);
+            string name = data.GetString(2);
 
-            Patient patient = new Patient(id, name);
+            Patient patient = new Patient(Id, patientId, name);
             patients.Add(patient);
 
             //Debug.Log("Print id: " + id + "  name: " + name);
@@ -185,7 +233,7 @@ public class DatabaseController : MonoBehaviour
         return ScoresToViewModel(data);
     }
 
-    public List<Score> SelectScoresByPatientId(int id)
+    public List<Score> SelectScoresByPatientId(string id)
     {
         Debug.Log("SelectScoresByPatientId id:" + id);
         string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME + " where PatientId=" + id;
@@ -199,12 +247,40 @@ public class DatabaseController : MonoBehaviour
         var PatientId = FindPatientIdByPatientName(name);
         if (PatientId != null)
         {
-            var scores = SelectScoresByPatientId((int)PatientId);
+            var scores = SelectScoresByPatientId((string)PatientId);
             List<Score> scoreList = scores?.OrderByDescending(c => DateTime.Parse(c.CreatedOn)).Take(10).ToList();
             return scoreList;
         }
         
         return null;
+    }
+
+     public List<Score> SelectScoreLeaderboard(string patientId, string sortBy)
+    {
+        Debug.Log("SelectScoreLeaderboard");
+
+        string where = "";
+        if( !string.IsNullOrEmpty(patientId)) {
+            where = String.Format(" where PatientId='{0}'", patientId);
+        }
+
+        string orderBy = "";
+
+        if(sortBy.Length>0 && sortBy == Constants.ScoreTable.TIME){
+            orderBy = " order by " + Constants.ScoreTable.TIME + " ASC";
+        }
+
+        else if(sortBy.Length>0 && sortBy == Constants.ScoreTable.CREATE_ON){
+            orderBy = " order by " + Constants.ScoreTable.CREATE_ON + " DESC";
+        }
+         
+        string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME + where + orderBy;
+        Debug.Log("query: " + query);
+
+        IDataReader data = ExecuteQuery(query);
+        List<Score> scoreList = ScoresToViewModel(data);
+
+        return scoreList;
     }
 
     public List<Score> SelectScoresByGameMode(string gameMode)
@@ -267,7 +343,7 @@ public class DatabaseController : MonoBehaviour
             while (data.Read())
             {
                 int id = data.GetInt32(0);
-                int patientId = data.GetInt32(1);
+                string patientId = data.GetString(1);
                 string gameMode = data.GetString(2);
                 string timeTaken = data.GetString(3);
                 string createdOn = data.GetString(4);
