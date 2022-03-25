@@ -35,8 +35,11 @@ public class DatabaseController : MonoBehaviour
     public void ConnectDb()
     {
         var database_name = "LinkItDb.db";
-        var conn = "URI=file:" + Application.dataPath + "/database/" + database_name;
+        var conn = "URI=file:" + Environment.CurrentDirectory + "/Assets/database/" + database_name;
 
+        Debug.Log("dataPath: " + Environment.CurrentDirectory);
+        Debug.Log("dataPath: " + Environment.CurrentDirectory + "/Assets/database/" + database_name);
+        Debug.Log("URI=file:" + Environment.CurrentDirectory + "/Assets/database/" + database_name);
         //Debug.Log("conn: " + conn);
         dbconn = (IDbConnection)new SqliteConnection(conn);
         dbconn.Open(); //Open connection to the database.
