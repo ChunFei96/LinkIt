@@ -43,8 +43,14 @@ public class GameController : MonoBehaviour
     public Text InstructionText;
     public Text GameEndTestTypeText;
     public Text GameEndTotalTimeText;
-    public InputField GameEndUserIDInput;
+    private InputField GameEndUserIDInput;
     private Text errorMsg;
+
+    string nextNode;
+    public static string instruction = "Next Node";
+    public static string TMPA_Instruction = "Please connect all the nodes in ascending numerical order." + "\n Next Node >>>  ";
+
+    public static string TMPB_Instruction = "Please connect all the nodes in ascending order alternatively" + "\n Next Node >>>  ";
 
     #region Public
 
@@ -52,6 +58,16 @@ public class GameController : MonoBehaviour
     {
         TestTypeText = GameObject.Find("TestType").GetComponent<Text>();
         InstructionText = GameObject.Find("Instruction").GetComponent<Text>();
+
+
+        if (GlobalManager.Instance.GetSelectedLevel() == GameRule.TMTA){
+            nextNode = "2";
+            instruction = TMPA_Instruction;
+        }
+        else if (GlobalManager.Instance.GetSelectedLevel() == GameRule.TMTB){ 
+            nextNode = "A";
+            instruction = TMPB_Instruction;
+        }
     }
 
     public void NodeOnMouseDown(GameObject currentNode)
@@ -62,7 +78,6 @@ public class GameController : MonoBehaviour
         {
             GameObject firstGO = selectedGOInstance.Dequeue();
             GameObject lastGO = selectedGOInstance.Dequeue();
-
 
             if (ValidationController.Instance.IsNextNodeValidated(linkedListGO, firstGO, lastGO))
             {
@@ -88,12 +103,12 @@ public class GameController : MonoBehaviour
                 foreach (var go in activeGOs)
                 {
                     if (!go.GetComponent<Node>().nodeModel.isConnect)
-                        go.GetComponent<SpriteRenderer>().color =  Global_Var.NodeColor;
+                        go.GetComponent<SpriteRenderer>().color = Color.white;
                     else
                         go.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 0.3f);
                 }
 
-                currentNode.GetComponent<SpriteRenderer>().color = Color.green;
+                currentNode.GetComponent<SpriteRenderer>().color = Global_Var.CurPositionNodeColor;
 
                 // Game Winning Condition
                 if (ValidationController.Instance.IsNextNodeLast(linkedListGO, lastGO))
@@ -113,13 +128,17 @@ public class GameController : MonoBehaviour
                     errorMsg = GameObject.Find("txt_ErrorMsg").GetComponent<Text>();
                     errorMsg.text = "";
                 }
+
+
+                // get Next node
+                nextNode = linkedListGO.Find(lastGO.GetComponent<Node>().nodeModel.value).Next.Value;
             }
             else
             {
                 selectedGOInstance.Enqueue(firstGO);
                 //GameController.Instance.selectedGOInstance.Enqueue(lastGO);
 
-                currentNode.GetComponent<SpriteRenderer>().color = Color.red;
+                currentNode.GetComponent<SpriteRenderer>().color = Global_Var.UnsuccessNodeColor;
             }
         }
         else
@@ -133,8 +152,12 @@ public class GameController : MonoBehaviour
                     go.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 0.3f);
             }
 
-            currentNode.GetComponent<SpriteRenderer>().color = Color.green;
+            currentNode.GetComponent<SpriteRenderer>().color = Global_Var.CurPositionNodeColor;
         }
+
+        // set instructon 
+        InstructionText.text = instruction + nextNode;
+        Debug.Log("next:");
     }
 
     public Vector2 CalculateNodePos()
@@ -197,7 +220,6 @@ public class GameController : MonoBehaviour
 
         if (!db.ValidPatientId(paitientID))
         {
-
             errorMsg.GetComponent<Text>().text = "Error: Invalid id!";
             Debug.Log("Invalid id: " + paitientID);
             return;

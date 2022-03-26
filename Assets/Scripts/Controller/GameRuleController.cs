@@ -36,7 +36,7 @@ public class GameRuleController : MonoBehaviour
 
     private List<char> alphaList = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray().ToList();
 
-    private List<int> numList = Enumerable.Range(1, 5).ToList(); //25
+    private List<int> numList = Enumerable.Range(1, 25).ToList();
 
     public void TMTA()
     {
@@ -48,9 +48,6 @@ public class GameRuleController : MonoBehaviour
             int fileName = numList[i];
             string filePath = Environment.CurrentDirectory + "/Assets/Resources/" + fileName + ".png";
             objectToSpawn.GetComponent<SpriteRenderer>().sprite = SpriteController.instance.LoadNewSprite(filePath);
-
-            // set node color
-            objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.NodeColor;
 
             // apply visibility
             objectToSpawn.SetActive(true);
@@ -67,11 +64,11 @@ public class GameRuleController : MonoBehaviour
             // default select the first node
             if (i == 0)
             {
-                objectToSpawn.GetComponent<SpriteRenderer>().color = Color.green;
+                objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.CurPositionNodeColor;
                 objectToSpawn.GetComponent<Node>().nodeModel.isConnect = true;
                 GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);
                 GameController.Instance.TestTypeText.text = "TMTA";
-                GameController.Instance.InstructionText.text = TMTARuleSelector.instructionText;
+                GameController.Instance.InstructionText.text = GameController.instruction + "2";                
             }
         }
     }
@@ -102,9 +99,6 @@ public class GameRuleController : MonoBehaviour
             string filePath = Environment.CurrentDirectory + "/Assets/Resources/" + fileName + ".png";
             objectToSpawn.GetComponent<SpriteRenderer>().sprite = SpriteController.instance.LoadNewSprite(filePath);
 
-            // set node color
-            objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.NodeColor;
-
             // apply visibility
             objectToSpawn.SetActive(true);
 
@@ -120,11 +114,11 @@ public class GameRuleController : MonoBehaviour
             // default select the first node
             if (i == 0)
             {
-                objectToSpawn.GetComponent<SpriteRenderer>().color = Color.green;
+                objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.CurPositionNodeColor;
                 objectToSpawn.GetComponent<Node>().nodeModel.isConnect = true;
                 GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);
                 GameController.Instance.TestTypeText.text = "TMTB";
-                GameController.Instance.InstructionText.text = TMTBRuleSelector.instructionText;
+                GameController.Instance.InstructionText.text = GameController.instruction + "A";       
             }
         }
     }
