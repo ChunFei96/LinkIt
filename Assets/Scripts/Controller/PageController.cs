@@ -17,7 +17,7 @@ public class PageController : MonoBehaviour
         Debug.Log("Redirect to: Leaderboard Scene");
         SceneManager.LoadScene("LeaderboardScene");
     }
-    
+
     public void Settings()
     {
         Debug.Log("Redirect to: Settings Scene");
@@ -42,5 +42,19 @@ public class PageController : MonoBehaviour
         Debug.Log("EXIT");
         Application.Quit();
     }
-    
+
+    private void Awake()
+    {
+        SetBGColor();
+    }
+
+    public static void SetBGColor()
+    {
+        if (!Color.clear.Equals(Global_Var.BGColor))
+        {
+            Camera cam = GameObject.Find("Main Camera").GetComponent<Camera>();
+            cam.backgroundColor = Global_Var.BGColor;
+        }
+    }
+
 }

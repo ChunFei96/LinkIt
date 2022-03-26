@@ -15,7 +15,7 @@ public class BackgroundColor : MonoBehaviour
      void Update()
      {
         
-             cam.backgroundColor = red;
+            // cam.backgroundColor = red;
      }
     
 }

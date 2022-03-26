@@ -1,31 +1,76 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System;
+using UnityEngine.Events;
+
+
+[Serializable]
+public class ColorSelEvent : UnityEvent<Color> { }
+
+
 
 public class SettingController : MonoBehaviour
-{
-    
-    public Color color1 = Color.red;
-    public Color color2 = Color.blue;
-    public float duration = 3.0F;
+{    
+    private Camera cam;
 
-    public Camera cam;
+    private GameObject colorPickerPopup;
+
+    private GameObject backgroundColor;
+    private GameObject nodeColor;
+
+    private string type;
+    
 
     // Start is called before the first frame update
-    void Starta()
+    void Start()
     {
+        backgroundColor = GameObject.Find("img_BackgroundColor");
+        nodeColor = GameObject.Find("img_NodeColor");
+        colorPickerPopup = GameObject.Find("colorPickerPanel");
+        colorPickerPopup.SetActive(false);
         
-        cam = GetComponent<Camera>();
-        
-        cam.clearFlags = CameraClearFlags.SolidColor;
+            backgroundColor.GetComponent<Image>().color = Global_Var.BGColor;
     }
 
     // Update is called once per frame
-    void Updatea()
+    void Update()
     {
-        
-        float t = Mathf.PingPong(Time.time, duration) / duration;
-        cam.backgroundColor = Color.Lerp(color1, color2, t);
+
     }
-    
+
+    public void onClickBackground()
+    {
+        Debug.Log("onClickBackground");
+        colorPickerPopup.SetActive(true);
+        type = "BG";
+    }
+
+    public void onClickNode()
+    {
+        Debug.Log("onClickNode");
+        colorPickerPopup.SetActive(true);
+        type = "NODE";
+    }
+
+    public void onClickOk()
+    {
+        if (type == "BG")
+        {
+            Global_Var.BGColor = Global_Var.tempColor;
+            backgroundColor.GetComponent<Image>().color = Global_Var.BGColor;
+            
+            PageController.SetBGColor();
+        }
+
+        else if (type == "NODE")
+        {
+            Global_Var.NodeColor = Global_Var.tempColor;
+            nodeColor.GetComponent<Image>().color = Global_Var.NodeColor;
+        }
+
+        colorPickerPopup.SetActive(false);
+    }
+
 }
