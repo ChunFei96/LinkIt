@@ -49,6 +49,9 @@ public class GameRuleController : MonoBehaviour
             string filePath = Environment.CurrentDirectory + "/Assets/Resources/" + fileName + ".png";
             objectToSpawn.GetComponent<SpriteRenderer>().sprite = SpriteController.instance.LoadNewSprite(filePath);
 
+            // set node color
+            objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.NodeColor;            
+
             // apply visibility
             objectToSpawn.SetActive(true);
 
@@ -95,11 +98,12 @@ public class GameRuleController : MonoBehaviour
                 fileName = alphaList[charCounter].ToString();
                 charCounter += 1;
             }
-                
-
 
             string filePath = Environment.CurrentDirectory + "/Assets/Resources/" + fileName + ".png";
             objectToSpawn.GetComponent<SpriteRenderer>().sprite = SpriteController.instance.LoadNewSprite(filePath);
+            
+            // set node color
+            objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.NodeColor;
 
             // apply visibility
             objectToSpawn.SetActive(true);

@@ -9,8 +9,5 @@ public class Global_Var : MonoBehaviour
     
     public static Color tempColor;
     public static Color BGColor = new Color(0.3f, 0.4f, 0.6f, 0.3f); 
-    public static Color NodeColor = new Color();
-
-    
-     
+    public static Color NodeColor = Color.white;     
 }

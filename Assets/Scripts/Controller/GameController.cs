@@ -19,7 +19,7 @@ public class GameController : MonoBehaviour
         linkedListGO = new LinkedList<string>();
         GameEndPanel.SetActive(false);
 
-        
+
     }
 
     #endregion
@@ -38,22 +38,21 @@ public class GameController : MonoBehaviour
     public GameObject GameEndPanel;
 
     [SerializeField]
-    
+
     public Text TestTypeText;
     public Text InstructionText;
     public Text GameEndTestTypeText;
     public Text GameEndTotalTimeText;
-    
-    public InputField GameEndUserIDInput;    
+    public InputField GameEndUserIDInput;
+    private Text errorMsg;
 
     #region Public
 
     void Start()
     {
-        TestTypeText = GameObject.Find("TestType").GetComponent<Text>();           
+        TestTypeText = GameObject.Find("TestType").GetComponent<Text>();
         InstructionText = GameObject.Find("Instruction").GetComponent<Text>();
     }
-
 
     public void NodeOnMouseDown(GameObject currentNode)
     {
@@ -97,7 +96,7 @@ public class GameController : MonoBehaviour
                 currentNode.GetComponent<SpriteRenderer>().color = Color.green;
 
                 // Game Winning Condition
-                if(ValidationController.Instance.IsNextNodeLast(linkedListGO, lastGO))
+                if (ValidationController.Instance.IsNextNodeLast(linkedListGO, lastGO))
                 {
                     // Stop Timer
                     TimerController.Instance.StopTimer();
@@ -106,10 +105,13 @@ public class GameController : MonoBehaviour
                     GameEndPanel.SetActive(true);
                     GameEndTestTypeText = GameObject.Find("GameEndTestType").GetComponent<Text>();
                     GameEndTotalTimeText = GameObject.Find("GameEndTotalTime").GetComponent<Text>();
-                    GameEndUserIDInput= GameObject.Find("Input_UserID").GetComponent<InputField>();
+                    GameEndUserIDInput = GameObject.Find("Input_UserID").GetComponent<InputField>();
 
                     GameEndTotalTimeText.text = "Total Time: " + TimerController.Instance.GetTime();
-                    GameEndTestTypeText.text = TestTypeText.text; 
+                    GameEndTestTypeText.text = TestTypeText.text;
+
+                    errorMsg = GameObject.Find("txt_ErrorMsg").GetComponent<Text>();
+                    errorMsg.text = "";
                 }
             }
             else
@@ -141,7 +143,7 @@ public class GameController : MonoBehaviour
 
         int Count = 0;
 
-        while(Count != activeGOs.Count)
+        while (Count != activeGOs.Count)
         {
             Count = 0;
             float xRand = Random.Range(-8.0f, 8.0f);
@@ -183,43 +185,39 @@ public class GameController : MonoBehaviour
 
     #endregion
 
-    public void SaveRecord(){
+    public void SaveRecord()
+    {
+        db = new DatabaseController();
+        db.InitDb();
 
-        try
+        string paitientID = GameEndUserIDInput.text;
+        string GameMode = TestTypeText.text;
+        string TimeTaken = TimerController.Instance.GetTime();
+        string CreatedOn = System.DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
+
+        if (!db.ValidPatientId(paitientID))
         {
-            db = new DatabaseController();
-            db.InitDb();
 
-            string paitientID = GameEndUserIDInput.text;
-            string GameMode = TestTypeText.text;
-            string TimeTaken = TimerController.Instance.GetTime();
-            string CreatedOn = System.DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
-
-            if(!db.ValidPatientId(paitientID)){
-                Debug.Log("Invalid id: " + paitientID);
-                return;
-            }
-
-
-            Score saveScore = new Score(paitientID, GameMode, TimeTaken, CreatedOn);
-
-            // Save to db
-            db.AddScore(saveScore);
-            Debug.Log("db saveScore successfuly!");
-
-            // if success disable field
-            GameEndUserIDInput.enabled = false;
-
-            ClearNodes();
-            SceneManager.LoadScene("LeaderboardScene");
-        } 
-        catch (System.Exception e)
-        {
-            Debug.Log("GameController/SaveRecord() Exception:" + e.Message);
+            errorMsg.GetComponent<Text>().text = "Error: Invalid id!";
+            Debug.Log("Invalid id: " + paitientID);
+            return;
         }
+
+        Score saveScore = new Score(paitientID, GameMode, TimeTaken, CreatedOn);
+
+        // Save to db
+        db.AddScore(saveScore);
+        Debug.Log("db saveScore successfuly!");
+
+        // if success disable field
+        GameEndUserIDInput.enabled = false;
+
+        ClearNodes();
+        SceneManager.LoadScene("LeaderboardScene");
     }
 
-    public void ClearNodes(){
+    public void ClearNodes()
+    {
         ObjectPooler.Instance.EnqueueToPool();
         //for (int i = 0; i < activeGOs.Count; i++)
         //{

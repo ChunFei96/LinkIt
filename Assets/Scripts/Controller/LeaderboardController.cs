@@ -17,9 +17,9 @@ public class LeaderboardController : MonoBehaviour
     List<Transform> rowTransform = new List<Transform>();
 
     private InputField inputSearch;
-    private static GameObject errorMsg;
-    private static GameObject sortOptionTestDate;
-    private static GameObject sortOptionTimeTaken;
+    private GameObject errorMsg;
+    private GameObject sortOptionTestDate;
+    private GameObject sortOptionTimeTaken;
 
     private void Awake() {
         db = new DatabaseController();
@@ -86,7 +86,6 @@ public class LeaderboardController : MonoBehaviour
         }
 
         Debug.Log("searchText: " + searchText + " sortBy: " + sortBy);
-
         
         setList(db.SelectScoreLeaderboard(searchText, sortBy));
     }
