@@ -88,7 +88,7 @@ public class GameController : MonoBehaviour
                 foreach (var go in activeGOs)
                 {
                     if (!go.GetComponent<Node>().nodeModel.isConnect)
-                        go.GetComponent<SpriteRenderer>().color = Color.white;
+                        go.GetComponent<SpriteRenderer>().color =  Global_Var.NodeColor;
                     else
                         go.GetComponent<SpriteRenderer>().color = new Color(0.5f, 0.5f, 0.5f, 0.3f);
                 }

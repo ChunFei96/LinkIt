@@ -12,16 +12,15 @@ public class ColorSelEvent : UnityEvent<Color> { }
 
 
 public class SettingController : MonoBehaviour
-{    
-    private Camera cam;
-
+{
     private GameObject colorPickerPopup;
-
+    private GameObject colorPreview;
     private GameObject backgroundColor;
     private GameObject nodeColor;
 
+
     private string type;
-    
+
 
     // Start is called before the first frame update
     void Start()
@@ -30,8 +29,9 @@ public class SettingController : MonoBehaviour
         nodeColor = GameObject.Find("img_NodeColor");
         colorPickerPopup = GameObject.Find("colorPickerPanel");
         colorPickerPopup.SetActive(false);
-        
-            backgroundColor.GetComponent<Image>().color = Global_Var.BGColor;
+
+        backgroundColor.GetComponent<Image>().color = Global_Var.BGColor;
+        nodeColor.GetComponent<Image>().color = Global_Var.NodeColor;
     }
 
     // Update is called once per frame
@@ -44,6 +44,8 @@ public class SettingController : MonoBehaviour
     {
         Debug.Log("onClickBackground");
         colorPickerPopup.SetActive(true);
+        colorPreview = GameObject.Find("colorPreview");
+        colorPreview.GetComponent<Image>().color = Global_Var.BGColor;
         type = "BG";
     }
 
@@ -51,7 +53,10 @@ public class SettingController : MonoBehaviour
     {
         Debug.Log("onClickNode");
         colorPickerPopup.SetActive(true);
+        colorPreview = GameObject.Find("colorPreview");
+        colorPreview.GetComponent<Image>().color = Global_Var.NodeColor;
         type = "NODE";
+
     }
 
     public void onClickOk()
@@ -60,7 +65,7 @@ public class SettingController : MonoBehaviour
         {
             Global_Var.BGColor = Global_Var.tempColor;
             backgroundColor.GetComponent<Image>().color = Global_Var.BGColor;
-            
+
             PageController.SetBGColor();
         }
 
@@ -70,6 +75,12 @@ public class SettingController : MonoBehaviour
             nodeColor.GetComponent<Image>().color = Global_Var.NodeColor;
         }
 
+        colorPickerPopup.SetActive(false);
+    }
+
+
+    public void onClickCancel()
+    {
         colorPickerPopup.SetActive(false);
     }
 

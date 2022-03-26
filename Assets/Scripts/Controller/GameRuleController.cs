@@ -50,7 +50,7 @@ public class GameRuleController : MonoBehaviour
             objectToSpawn.GetComponent<SpriteRenderer>().sprite = SpriteController.instance.LoadNewSprite(filePath);
 
             // set node color
-            objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.NodeColor;            
+            objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.NodeColor;
 
             // apply visibility
             objectToSpawn.SetActive(true);
@@ -85,14 +85,14 @@ public class GameRuleController : MonoBehaviour
             GameObject objectToSpawn = GameController.Instance.activeGOs[i];
 
             // apply img texture on GO
-            string fileName=string.Empty;
-            
+            string fileName = string.Empty;
+
 
             if ((i + 1) % 2 == 1) // 0, 2, 4
             {
                 fileName = numList[numCounter].ToString();
                 numCounter += 1;
-            } 
+            }
             else if ((i + 1) % 2 == 0) // 1, 3, 5
             {
                 fileName = alphaList[charCounter].ToString();
@@ -101,7 +101,7 @@ public class GameRuleController : MonoBehaviour
 
             string filePath = Environment.CurrentDirectory + "/Assets/Resources/" + fileName + ".png";
             objectToSpawn.GetComponent<SpriteRenderer>().sprite = SpriteController.instance.LoadNewSprite(filePath);
-            
+
             // set node color
             objectToSpawn.GetComponent<SpriteRenderer>().color = Global_Var.NodeColor;
 
@@ -122,7 +122,7 @@ public class GameRuleController : MonoBehaviour
             {
                 objectToSpawn.GetComponent<SpriteRenderer>().color = Color.green;
                 objectToSpawn.GetComponent<Node>().nodeModel.isConnect = true;
-                GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);                
+                GameController.Instance.selectedGOInstance.Enqueue(objectToSpawn);
                 GameController.Instance.TestTypeText.text = "TMTB";
                 GameController.Instance.InstructionText.text = TMTBRuleSelector.instructionText;
             }
