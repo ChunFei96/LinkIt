@@ -128,10 +128,9 @@ public class GameController : MonoBehaviour
                     errorMsg = GameObject.Find("txt_ErrorMsg").GetComponent<Text>();
                     errorMsg.text = "";
                 }
-
-
-                // get Next node
-                nextNode = linkedListGO.Find(lastGO.GetComponent<Node>().nodeModel.value).Next.Value;
+                else 
+                    // get Next node
+                    nextNode = linkedListGO.Find(lastGO.GetComponent<Node>().nodeModel.value).Next.Value;
             }
             else
             {
