@@ -20,7 +20,12 @@ public class ObjectPooler : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        DontDestroyOnLoad(this.gameObject);
+
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(this.gameObject);
     }
 
     #endregion
@@ -50,8 +55,6 @@ public class ObjectPooler : MonoBehaviour
             poolDictionary.Add(pool.tag, objectPool);
             
         }
-
-        DontDestroyOnLoad(this.gameObject);
     }
 
     public void SpawnFromPool(string tag)

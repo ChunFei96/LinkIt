@@ -10,7 +10,12 @@ public class GlobalManager : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
+        DontDestroyOnLoad(this.gameObject);
+
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(this.gameObject);
     }
 
     #endregion
@@ -19,7 +24,7 @@ public class GlobalManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        DontDestroyOnLoad(this.gameObject);
+        
     }
 
     // Update is called once per frame
