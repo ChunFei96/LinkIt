@@ -230,7 +230,7 @@ public class DatabaseController : MonoBehaviour
         string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME;
         //Debug.Log("SelectAllScores query " + query);
         IDataReader data = ExecuteQuery(query);
-        return ScoresToViewModel(data);
+        return ScoresToViewModel(data, Constants.ScoreTable.TIME);
     }
 
     public List<Score> SelectScoresByPatientId(string id)
@@ -239,7 +239,7 @@ public class DatabaseController : MonoBehaviour
         string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME + " where PatientId=" + id;
 
         IDataReader data = ExecuteQuery(query);
-        return ScoresToViewModel(data);
+        return ScoresToViewModel(data, Constants.ScoreTable.TIME);
     }
 
     public List<Score>? SelectTopScoresByPatientName(string name, int counts)
@@ -248,7 +248,7 @@ public class DatabaseController : MonoBehaviour
         if (PatientId != null)
         {
             var scores = SelectScoresByPatientId((string)PatientId);
-            List<Score> scoreList = scores?.OrderByDescending(c => DateTime.Parse(c.CreatedOn)).Take(10).ToList();
+            List<Score> scoreList = scores?.OrderByDescending(c => c.CreatedOn).Take(10).ToList();
             return scoreList;
         }
         
@@ -264,21 +264,11 @@ public class DatabaseController : MonoBehaviour
             where = String.Format(" where PatientId='{0}'", patientId);
         }
 
-        string orderBy = "";
-
-        if(sortBy.Length>0 && sortBy == Constants.ScoreTable.TIME){
-            orderBy = " order by " + Constants.ScoreTable.TIME + " ASC";
-        }
-
-        else if(sortBy.Length>0 && sortBy == Constants.ScoreTable.CREATE_ON){
-            orderBy = " order by " + Constants.ScoreTable.CREATE_ON + " DESC";
-        }
-         
-        string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME + where + orderBy;
+        string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME + where;
         Debug.Log("query: " + query);
 
         IDataReader data = ExecuteQuery(query);
-        List<Score> scoreList = ScoresToViewModel(data);
+        List<Score> scoreList = ScoresToViewModel(data, sortBy);
 
         return scoreList;
     }
@@ -289,12 +279,13 @@ public class DatabaseController : MonoBehaviour
         string query = Constants.SqliteCommand.SelectAll + Constants.ScoreTable.TABLE_NAME + " where GameMode=" + gameMode;
 
         IDataReader data = ExecuteQuery(query);
-        return ScoresToViewModel(data);
+        return ScoresToViewModel(data, Constants.ScoreTable.TIME);
     }
 
     public void AddScore(Score score)
     {
         string query = Constants.SqliteCommand.InsertScore;
+        string strCreatedOn = score.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss");
 
         IDbCommand dbcmd = dbconn.CreateCommand();
         dbcmd.CommandText = query;
@@ -302,7 +293,7 @@ public class DatabaseController : MonoBehaviour
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@patientId", score.PatientId.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@gameMode", score.GameMode));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken));
-        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", score.CreatedOn));
+        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", strCreatedOn));
         ExecuteNonQuery(dbcmd);
         Debug.Log("Added new score for patientId :" + score.PatientId);
     }
@@ -310,6 +301,7 @@ public class DatabaseController : MonoBehaviour
     public void UpdateScore(Score score)
     {
         string query = Constants.SqliteCommand.UpdateScore;
+        string strCreatedOn = score.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss");
 
         IDbCommand dbcmd = dbconn.CreateCommand();
         dbcmd.CommandText = query;
@@ -317,7 +309,7 @@ public class DatabaseController : MonoBehaviour
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@patientId", score.PatientId.ToString()));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@gameMode", score.GameMode));
         dbcmd.Parameters.Add(CreateParameter(dbcmd, "@timeTaken", score.TimeTaken));
-        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", score.CreatedOn));
+        dbcmd.Parameters.Add(CreateParameter(dbcmd, "@createdOn", strCreatedOn));
         ExecuteNonQuery(dbcmd);
 
         Debug.Log("Updated Score Id " + score.Id + "'s info.");
@@ -335,7 +327,7 @@ public class DatabaseController : MonoBehaviour
         Debug.Log("Score Id " + id + "has been deleted.");
     }
 
-    private List<Score> ScoresToViewModel(IDataReader data)
+    private List<Score> ScoresToViewModel(IDataReader data, string sortby)
     {
         List<Score> scores = new List<Score>();
         try
@@ -348,7 +340,9 @@ public class DatabaseController : MonoBehaviour
                 string timeTaken = data.GetString(3);
                 string createdOn = data.GetString(4);
 
-                Score score = new Score(id, patientId, gameMode, timeTaken, createdOn);
+                DateTime ConvertcreatedOnDateTime = Convert.ToDateTime(createdOn);
+
+                Score score = new Score(id, patientId, gameMode, timeTaken, ConvertcreatedOnDateTime);
                 scores.Add(score);
             }
 
@@ -360,6 +354,22 @@ public class DatabaseController : MonoBehaviour
         {
             Debug.Log("ScoresToViewModel exception: " + e.Message);
         }
+
+        //Apply Sorting: Constants.ScoreTable.TIME or Constants.ScoreTable.CREATE_ON
+        if (sortby == Constants.ScoreTable.CREATE_ON)
+        {
+            scores = scores.OrderByDescending(c => c.CreatedOn).ToList();
+        }
+        else
+        {
+            scores = scores.OrderBy(c => c.TimeTaken).ToList();
+        }
+
+        if (scores.Count > 10)
+        {
+            scores = scores.Take(10).ToList();
+        }
+
         return scores;
     }
 

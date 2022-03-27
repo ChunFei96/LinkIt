@@ -77,8 +77,9 @@ public class LeaderboardController : MonoBehaviour
         }
 
         String sortBy = Constants.ScoreTable.CREATE_ON;
-
-        if(sortOptionTestDate.GetComponent<Toggle>().isOn){
+        bool isSortByDate = sortOptionTestDate.GetComponent<Toggle>().isOn;
+        if(isSortByDate)
+        {
             sortBy = Constants.ScoreTable.CREATE_ON;        
         }        
         else{
@@ -86,8 +87,7 @@ public class LeaderboardController : MonoBehaviour
         }
 
         Debug.Log("searchText: " + searchText + " sortBy: " + sortBy);
-        
-        setList(db.SelectScoreLeaderboard(searchText, sortBy));
+        setList(db.SelectScoreLeaderboard(searchText, sortBy));  //Display all scores 
     }
 
     private void ClearAllRows()

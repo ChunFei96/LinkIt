@@ -215,7 +215,8 @@ public class GameController : MonoBehaviour
         string paitientID = GameEndUserIDInput.text;
         string GameMode = TestTypeText.text;
         string TimeTaken = TimerController.Instance.GetTime();
-        string CreatedOn = System.DateTime.Now.ToString("yyyy-MM-dd h:mm:ss tt");
+        string CreatedOn = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        System.DateTime ConvertcreatedOnDateTime = System.Convert.ToDateTime(CreatedOn);
 
         if (!db.ValidPatientId(paitientID))
         {
@@ -224,7 +225,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        Score saveScore = new Score(paitientID, GameMode, TimeTaken, CreatedOn);
+        Score saveScore = new Score(paitientID, GameMode, TimeTaken, ConvertcreatedOnDateTime);
 
         // Save to db
         db.AddScore(saveScore);
